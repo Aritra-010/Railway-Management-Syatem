@@ -1,0 +1,34 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
+import Admin from "./pages/admin/Admin";
+import AddStation from "./pages/admin/AddStation";
+import AddTrain from "./pages/admin/AddTrain";
+import ConnectTrain from "./pages/admin/ConnectTrain";
+
+import Home from "./pages/user/Home";
+import Booking from "./pages/user/Booking";
+import Cancellation from "./pages/user/Cancellation";
+import TrainStatus from "./pages/user/TrainStatus";
+
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/cancellation" element={<Cancellation />} />
+        <Route path="/status" element={<TrainStatus />} />
+
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/add-station" element={<AddStation />} />
+        <Route path="/admin/add-train" element={<AddTrain />} />
+        <Route path="/admin/connect" element={<ConnectTrain />} />
+      </Routes>    
+    </BrowserRouter>
+  );
+}
+
+export default App;
