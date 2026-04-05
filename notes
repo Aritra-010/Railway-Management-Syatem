@@ -2,7 +2,7 @@ http://localhost:5173/
 
 to start frontend server again:   cd frontend , npm run dev
 to start backend server again:      cd backend, env/Scripts/activate , uvicorn main:app --reload
-
+ 
 App.jsx → controls what page is shown
 pages/ → actual screens (Login, Home, etc.)
 main.jsx → entry point (don’t touch)

@@ -8,7 +8,7 @@ import AddTrain from "./pages/admin/AddTrain";
 import ConnectTrain from "./pages/admin/ConnectTrain";
 
 import Home from "./pages/user/Home";
-import Booking from "./pages/user/Booking";
+import TicketBooking from "./pages/user/ticket_booking";
 import Cancellation from "./pages/user/Cancellation";
 import TrainStatus from "./pages/user/TrainStatus";
 
@@ -18,7 +18,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/booking" element={<Booking />} />
+        <Route path="/ticket-booking" element={<TicketBooking />} />
         <Route path="/cancellation" element={<Cancellation />} />
         <Route path="/status" element={<TrainStatus />} />
 

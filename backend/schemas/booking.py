@@ -7,9 +7,8 @@ class Passenger(BaseModel):
     gender: str
     coach_type: str
 
-class BookingCreate(BaseModel):
-    train_number: str
-    source: str
-    destination: str
+class BookingRequest(BaseModel):
+    train_id: int
+    journey_date: str
     phone_number: str
     passengers: List[Passenger]
