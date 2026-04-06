@@ -6,7 +6,9 @@ function Home() {
       <h1>Railway Management System</h1>
 
       <div style={{ marginTop: "30px" }}>
-        <Link to="/booking">
+        
+        {/* ✅ FIXED ROUTE */}
+        <Link to="/ticket-booking">
           <button style={{ margin: "10px", padding: "10px 20px" }}>
             Book Ticket
           </button>
@@ -14,7 +16,7 @@ function Home() {
 
         <Link to="/cancellation">
           <button style={{ margin: "10px", padding: "10px 20px" }}>
-            Cancel Ticket
+            My Bookings
           </button>
         </Link>
 
@@ -23,6 +25,7 @@ function Home() {
             Check Train Status
           </button>
         </Link>
+
       </div>
     </div>
   );

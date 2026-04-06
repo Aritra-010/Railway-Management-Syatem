@@ -39,3 +39,23 @@ def search_trains(source: str, destination: str):
     finally:
         cursor.close()
         conn.close()
+        
+@router.get("/stations")
+def get_stations():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT name FROM stations")
+        rows = cursor.fetchall()
+
+        stations = [row[0] for row in rows]
+
+        return {"stations": stations}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+    finally:
+        cursor.close()
+        conn.close()

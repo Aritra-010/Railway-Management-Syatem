@@ -97,6 +97,7 @@ def confirm_booking(data: BookingRequest):
     cursor = conn.cursor()
 
     try:
+        # Get train details
         cursor.execute("""
             SELECT train_name, train_number, source, destination
             FROM trains
@@ -108,33 +109,41 @@ def confirm_booking(data: BookingRequest):
         if not train:
             return {"error": "Train not found"}
 
+        # Generate common values
         pnr = generate_pnr()
         coach, seat_numbers = generate_seats(len(data.passengers))
         total_fare = 200 * len(data.passengers)
-        cursor.execute("""
-            INSERT INTO bookings (
-                pnr, train_id, train_name, train_number,
-                source, destination, journey_date,
-                phone_number, passengers,
-                coach, seat_numbers,
-                total_fare, status
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            pnr,
-            data.train_id,
-            train[0],
-            train[1],
-            train[2],
-            train[3],
-            data.journey_date,
-            data.phone_number,
-            json.dumps([p.dict() for p in data.passengers]),
-            coach,
-            seat_numbers,
-            total_fare,
-            "CONFIRMED"
-        ))
+
+        # 🔥 INSERT ONE ROW PER PASSENGER
+        for p in data.passengers:
+            cursor.execute("""
+                INSERT INTO bookings (
+                    pnr, train_id, train_name, train_number,
+                    source, destination, journey_date,
+                    phone_number,
+                    pass_name, pass_age, pass_gender, coach_type,
+                    coach, seat_numbers,
+                    total_fare, status
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                pnr,
+                data.train_id,
+                train[0],
+                train[1],
+                train[2],
+                train[3],
+                data.journey_date,
+                data.phone_number,
+                p.name,
+                p.age,
+                p.gender,
+                p.coach_type,
+                coach,
+                seat_numbers,
+                total_fare,
+                "CONFIRMED"
+            ))
 
         conn.commit()
 
