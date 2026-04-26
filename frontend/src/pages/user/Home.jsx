@@ -14,7 +14,7 @@ function Home() {
           </button>
         </Link>
 
-        <Link to="/cancellation">
+        <Link to="/my-booking">
           <button style={{ margin: "10px", padding: "10px 20px" }}>
             My Bookings
           </button>

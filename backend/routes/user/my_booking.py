@@ -4,7 +4,7 @@ from db.connection import get_connection
 router = APIRouter()
 
 
-@router.get("/{pnr}")
+@router.get("/my-booking/{pnr}")
 def get_booking_by_pnr(pnr: str):
     conn = get_connection()
     cursor = conn.cursor()

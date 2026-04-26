@@ -4,6 +4,9 @@ from routes.admin import station, train
 from routes.user import train as user_train
 from routes.user import ticket_booking
 from routes.user import my_booking
+from routes.user import TrainStatus
+from routes import signup
+from routes import login
 
 app = FastAPI()
 
@@ -16,6 +19,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(signup.router)
+app.include_router(login.router)
+
 # Admin routes
 app.include_router(station.router, prefix="/admin")
 app.include_router(train.router, prefix="/admin")
@@ -24,6 +30,7 @@ app.include_router(train.router, prefix="/admin")
 app.include_router(user_train.router, prefix="/user")
 app.include_router(ticket_booking.router, prefix="/user/ticket-booking")
 app.include_router(my_booking.router, prefix="/user/my-bookings")
+app.include_router(TrainStatus.router, prefix="/user")
 
 @app.get("/")
 def root():
