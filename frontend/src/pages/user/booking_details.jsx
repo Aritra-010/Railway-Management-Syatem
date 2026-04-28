@@ -9,7 +9,7 @@ function BookingDetails() {
   const [phone, setPhone] = useState("");
   const [numPassengers, setNumPassengers] = useState(1);
   const [passengers, setPassengers] = useState([
-    { name: "", age: "", gender: "", coach: "" }
+    { name: "", age: "", gender: "", coach: "" },
   ]);
 
   // 🔢 Handle passenger count
@@ -23,10 +23,10 @@ function BookingDetails() {
         name: "",
         age: "",
         gender: "",
-        coach: ""
+        coach: "",
       });
     }
-   setPassengers(newPassengers);
+    setPassengers(newPassengers);
   };
 
   // ✏️ Handle input change
@@ -38,59 +38,66 @@ function BookingDetails() {
 
   // 🚀 CONFIRM BOOKING
   const confirmBooking = async () => {
-  if (!phone) {
-    alert("Phone number is required");
-    return;
-  }
+    if (loading) return; // 🔒 prevent multiple clicks
 
-  for (let i = 0; i < passengers.length; i++) {
-    const p = passengers[i];
-    if (!p.name || !p.age || !p.gender || !p.coach) {
-      alert(`Fill all details for Passenger ${i + 1}`);
+    if (!phone) {
+      alert("Phone number is required");
       return;
     }
-  }
 
-  try {
-    const payload = {
-      train_id: train.train_id,
-      journey_date: date,
-      phone_number: phone,
-      passengers: passengers.map((p) => ({
-        name: p.name,
-        age: parseInt(p.age),
-        gender: p.gender,
-        coach_type: p.coach
-      }))
-    };
-
-    const res = await fetch(
-      "http://127.0.0.1:8000/user/ticket-booking/confirm",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
+    for (let i = 0; i < passengers.length; i++) {
+      const p = passengers[i];
+      if (!p.name || !p.age || !p.gender || !p.coach) {
+        alert(`Fill all details for Passenger ${i + 1}`);
+        return;
       }
-    );
-
-    const data = await res.json();
-
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert(`Booking Successful!\nPNR: ${data.pnr}`);
-
-      // 🔥 redirect to avoid duplicate booking
-      window.location.href = "/ticket-booking";
     }
 
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
-  }
-};
+    try {
+      setLoading(true); // 🔒 disable button
+
+      const payload = {
+        train_id: train.train_id,
+        journey_date: date,
+        phone_number: phone,
+        passengers: passengers.map((p) => ({
+          name: p.name,
+          age: parseInt(p.age),
+          gender: p.gender,
+          coach_type: p.coach,
+        })),
+      };
+
+      const res = await fetch(
+        "http://127.0.0.1:8000/user/ticket-booking/confirm",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Booking failed");
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+
+      alert(`Booking Successful!\nPNR: ${data.pnr}`);
+
+      // ✅ redirect properly
+      window.location.href = "/home";
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -98,11 +105,21 @@ function BookingDetails() {
 
       {/* 🚆 TRAIN INFO */}
       <div>
-        <p><b>Train:</b> {train?.train_name}</p>
-        <p><b>Train Number:</b> {train?.train_number}</p>
-        <p><b>Source:</b> {from}</p>
-        <p><b>Destination:</b> {to}</p>
-        <p><b>Date:</b> {date}</p>
+        <p>
+          <b>Train:</b> {train?.train_name}
+        </p>
+        <p>
+          <b>Train Number:</b> {train?.train_number}
+        </p>
+        <p>
+          <b>Source:</b> {from}
+        </p>
+        <p>
+          <b>Destination:</b> {to}
+        </p>
+        <p>
+          <b>Date:</b> {date}
+        </p>
       </div>
 
       <hr />
@@ -110,10 +127,7 @@ function BookingDetails() {
       {/* 📞 PHONE */}
       <div>
         <label>Phone Number: </label>
-        <input
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+        <input value={phone} onChange={(e) => setPhone(e.target.value)} />
       </div>
 
       <hr />
@@ -141,33 +155,25 @@ function BookingDetails() {
           <input
             placeholder="Name"
             value={p.name}
-            onChange={(e) =>
-              handleChange(index, "name", e.target.value)
-            }
+            onChange={(e) => handleChange(index, "name", e.target.value)}
           />
 
           <input
             placeholder="Age"
             value={p.age}
-            onChange={(e) =>
-              handleChange(index, "age", e.target.value)
-            }
+            onChange={(e) => handleChange(index, "age", e.target.value)}
           />
 
           <input
             placeholder="Gender"
             value={p.gender}
-            onChange={(e) =>
-              handleChange(index, "gender", e.target.value)
-            }
+            onChange={(e) => handleChange(index, "gender", e.target.value)}
           />
 
           <input
             placeholder="Coach Type"
             value={p.coach}
-            onChange={(e) =>
-              handleChange(index, "coach", e.target.value)
-            }
+            onChange={(e) => handleChange(index, "coach", e.target.value)}
           />
         </div>
       ))}
@@ -175,8 +181,8 @@ function BookingDetails() {
       <hr />
 
       {/* ✅ CONFIRM BUTTON */}
-      <button onClick={confirmBooking}>
-        Confirm & Book
+      <button onClick={confirmBooking} disabled={loading}>
+        {loading ? "Booking..." : "Confirm & Book"}
       </button>
     </div>
   );

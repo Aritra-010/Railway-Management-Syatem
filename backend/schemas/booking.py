@@ -12,4 +12,3 @@ class BookingRequest(BaseModel):
     journey_date: str
     phone_number: str
     passengers: List[Passenger]
-    user_id: int
