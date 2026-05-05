@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 function TicketBooking() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [date, setDate] = useState("");
+  const getToday = () => {
+  const today = new Date();
+  return today.toISOString().split("T")[0]; // YYYY-MM-DD
+  };
+  const [date, setDate] = useState(getToday());
   const [trains, setTrains] = useState([]);
   const [stations, setStations] = useState([]);
 

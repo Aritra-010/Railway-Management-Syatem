@@ -63,8 +63,8 @@ function BookingDetails() {
         passengers: passengers.map((p) => ({
           name: p.name,
           age: parseInt(p.age),
-          gender: p.gender,
-          coach_type: p.coach,
+          gender: p.gender.toUpperCase(),
+          coach_type: p.coach.toUpperCase(),
         })),
       };
 
@@ -81,7 +81,8 @@ function BookingDetails() {
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Booking failed");
+        console.log("BACKEND ERROR:", err);
+        alert(err.detail || JSON.stringify(err));
         setLoading(false);
         return;
       }
@@ -164,17 +165,33 @@ function BookingDetails() {
             onChange={(e) => handleChange(index, "age", e.target.value)}
           />
 
-          <input
-            placeholder="Gender"
+          <select
             value={p.gender}
-            onChange={(e) => handleChange(index, "gender", e.target.value)}
-          />
+            onChange={(e) =>
+              handleChange(index, "gender", e.target.value)
+            }
+          >
+            <option value="">Select Gender</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Others</option>
+          </select>
 
-          <input
-            placeholder="Coach Type"
+          <select
             value={p.coach}
-            onChange={(e) => handleChange(index, "coach", e.target.value)}
-          />
+            onChange={(e) =>
+              handleChange(index, "coach", e.target.value)
+            }
+          >
+            <option value="">Select Coach</option>
+            <option value="GS">GS</option>
+            <option value="SL">SL</option>
+            <option value="3A">3A</option>
+            <option value="2A">2A</option>
+            <option value="1A">1A</option>
+            <option value="CC">CC</option>
+            <option value="2S">2S</option>
+          </select>
         </div>
       ))}
 

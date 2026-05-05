@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from db.connection import get_connection
 from schemas.booking import BookingRequest
 
@@ -97,7 +97,6 @@ def confirm_booking(data: BookingRequest):
     cursor = conn.cursor()
 
     try:
-        # Get train details
         cursor.execute("""
             SELECT train_name, train_number, source, destination
             FROM trains
@@ -107,15 +106,19 @@ def confirm_booking(data: BookingRequest):
         train = cursor.fetchone()
 
         if not train:
-            return {"error": "Train not found"}
+            raise HTTPException(status_code=404, detail="Train not found")
 
-        # Generate common values
         pnr = generate_pnr()
         coach, seat_numbers = generate_seats(len(data.passengers))
         total_fare = 200 * len(data.passengers)
 
-        # 🔥 INSERT ONE ROW PER PASSENGER
         for p in data.passengers:
+            if p.gender.upper() not in ["M", "F", "O"]:
+                raise HTTPException(status_code=400, detail="Invalid gender")
+
+            if p.coach_type.upper() not in ["GS", "SL", "3A", "2A", "1A", "CC", "2S"]:
+                raise HTTPException(status_code=400, detail="Invalid coach type")
+
             cursor.execute("""
                 INSERT INTO bookings (
                     pnr, train_id, train_name, train_number,
@@ -137,8 +140,8 @@ def confirm_booking(data: BookingRequest):
                 data.phone_number,
                 p.name,
                 p.age,
-                p.gender,
-                p.coach_type,
+                p.gender.upper(),        # ✅ FIX
+                p.coach_type.upper(),    # ✅ FIX
                 coach,
                 seat_numbers,
                 total_fare,
@@ -156,9 +159,14 @@ def confirm_booking(data: BookingRequest):
             "total_fare": total_fare
         }
 
+    except HTTPException as e:
+        conn.rollback()
+        raise e  # 🔥 IMPORTANT
+
     except Exception as e:
         conn.rollback()
-        return {"error": str(e)}
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="Booking failed")
 
     finally:
         cursor.close()

@@ -1,7 +1,7 @@
  frontend port:  http://localhost:5173/
 
 to start frontend server again:   cd frontend , npm run dev
-to start backend server again:      cd backend, env/Scripts/activate , uvicorn main:app --reload
+to start backend server again:      cd backend, venv/Scripts/activate , uvicorn main:app --reload
  
 App.jsx → controls what page is shown
 pages/ → actual screens (Login, Home, etc.)
@@ -13,3 +13,34 @@ App.css → optional
 
 DELETE FROM stations WHERE id = 1;
 TRUNCATE TABLE stations RESTART IDENTITY;   {This will Delete all rows Reset id back to 1}
+
+CREATE TABLE stations (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    code VARCHAR(10) UNIQUE NOT NULL,
+    city VARCHAR(100) NOT NULL
+);
+CREATE TABLE trains (
+    id SERIAL PRIMARY KEY,    
+    train_number VARCHAR(20) UNIQUE NOT NULL,
+    train_name VARCHAR(100) NOT NULL,
+    train_type VARCHAR(50),    
+    source VARCHAR(100) NOT NULL,
+    destination VARCHAR(100) NOT NULL,    
+    total_coaches INT,
+    total_seats INT,    
+    gs_seats INT,
+    sl_seats INT,
+    third_ac_seats INT,
+    second_ac_seats INT,
+    first_ac_seats INT,
+    cc_seats INT,
+    second_sitting_seats INT,
+    available_gs_seats INT DEFAU,
+    available_sl_seats INT,
+    available_3a_seats INT,
+    available_2a_seats INT,
+    available_1a_seats INT,
+    available_cc_seats INT,
+    available_2s_seats INT
+);
